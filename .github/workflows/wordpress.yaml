@@ -32,10 +32,10 @@ jobs:
     uses: ./.github/workflows/build-service.yaml
     with:
       environment: ${{ needs.environment.outputs.name }}
-      project: RedDog.UI
-      context: ./src/RedDog.UI
-      repository: reddog
-      image: ui
+      project: JdPortfolio
+      context: ./src
+      repository: jd-portfolio
+      image: jdportfolio:latest
       skipExisting: false
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
