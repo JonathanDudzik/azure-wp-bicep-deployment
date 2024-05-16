@@ -1,10 +1,10 @@
 FROM wordpress:latest
 
 # Set environment variables for the cloud-based database
-ENV DB_HOST jon
-ENV DB_USER jon
-ENV DB_PASSWORD qerty
-ENV DB_NAME jons-db
+ENV DB_NAME=${DB_NAME}
+ENV DB_USER=${DB_USER}
+ENV DB_PASSWORD=${DB_PASSWORD}
+ENV DB_HOST=${DB_HOST}
 
 # Copy the WordPress configuration file
 COPY wp-config.php /var/www/html/

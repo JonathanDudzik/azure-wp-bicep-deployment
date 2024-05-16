@@ -22,10 +22,10 @@ define('NONCE_SALT',       '<random_string>');
 $table_prefix  = 'wp_';
 
 // Debug mode
-define('WP_DEBUG', false);
+define('WP_DEBUG', true);
 
 // Disable file editing from the WordPress dashboard
-define('DISALLOW_FILE_EDIT', true);
+define('DISALLOW_FILE_EDIT', false);
 
 // Disable WordPress updates
 define('AUTOMATIC_UPDATER_DISABLED', true);
