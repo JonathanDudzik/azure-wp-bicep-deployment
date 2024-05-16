@@ -77,7 +77,6 @@ jobs:
     uses: ./.github/workflows/build-service.yaml
     with:
       environment: ${{ needs.environment.outputs.name }}
-      project: JdPortfolio
       context: ./src
       repository: jd-portfolio
       image: jd-portfolio
