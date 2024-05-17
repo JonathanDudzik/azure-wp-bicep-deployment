@@ -3,7 +3,7 @@
 name: Deploy Solution
 
 on:
-  workflow_dispatch:
+  workflow_dispatch
 
 jobs:
 
