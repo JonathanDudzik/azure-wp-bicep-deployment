@@ -27,49 +27,49 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
       AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
 
-  group:
-    needs: [environment, validate]
-    name: Provision Resource Group 
-    runs-on: ubuntu-latest
-    outputs:
-      name: ${{ steps.resource.outputs.name }}
-    environment: 
-      name: ${{ needs.environment.outputs.name }}
+  # group:
+  #   needs: [environment, validate]
+  #   name: Provision Resource Group 
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     name: ${{ steps.resource.outputs.name }}
+  #   environment: 
+  #     name: ${{ needs.environment.outputs.name }}
 
-    steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Create Group
-        id: resource
-        run: |
-          az group create --name $RESOURCE_GROUP \
-                          --location ${{ secrets.AZURE_LOCATION }} \
-                          --query name
-        env:
-          RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+  #   steps:
+  #     - uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Create Group
+  #       id: resource
+  #       run: |
+  #         az group create --name $RESOURCE_GROUP \
+  #                         --location ${{ secrets.AZURE_LOCATION }} \
+  #                         --query name
+  #       env:
+  #         RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
   
-  registry:
-    needs: [environment, group]
-    name: Provision ACR 
-    runs-on: ubuntu-latest
-    environment: 
-      name: ${{ needs.environment.outputs.name }}
+  # registry:
+  #   needs: [environment, group]
+  #   name: Provision ACR 
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: ${{ needs.environment.outputs.name }}
 
-    steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Create Registry
-        id: resource
-        run: |
-          az acr create --resource-group $RESOURCE_GROUP \
-                        --name $REGISTRY_NAME \
-                        --sku Basic \
-                        --admin-enabled true
-        env:
-          RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
-          REGISTRY_NAME: acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}
+  #   steps:
+  #     - uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Create Registry
+  #       id: resource
+  #       run: |
+  #         az acr create --resource-group $RESOURCE_GROUP \
+  #                       --name $REGISTRY_NAME \
+  #                       --sku Basic \
+  #                       --admin-enabled true
+  #       env:
+  #         RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+  #         REGISTRY_NAME: acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}
 
   build-portfolio:
     needs: [environment,registry]
