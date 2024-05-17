@@ -1,7 +1,12 @@
 # This workflow deploys the full solution including infra
 
 name: Deploy Solution
-on: workflow_dispatch
+on: 
+push:
+    branches:
+      - 'main'
+      - 'development'
+  workflow_dispatch
 jobs:
 
   environment:
