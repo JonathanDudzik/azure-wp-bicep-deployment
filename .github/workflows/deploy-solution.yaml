@@ -80,7 +80,7 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}   
   
   deploy:
-    needs: [environment, registry, build-portfolio]
+    needs: [environment, registry, build-jd-blog]
     name: Deploy Bicep 
     runs-on: ubuntu-latest
     environment: 
