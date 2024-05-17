@@ -7,7 +7,7 @@ ENV DB_PASSWORD=${DB_PASSWORD}
 ENV DB_HOST=${DB_HOST}
 
 # Copy the WordPress configuration file
-# COPY ./src/JdPortfolio/wp-config.php /var/www/html/
+COPY ./src/JdPortfolio/wp-config.php /var/www/html/
 
 # Set file permissions for the WordPress configuration file
-# RUN chown www-data:www-data /var/www/html/wp-config.php
+RUN chown www-data:www-data /var/www/html/wp-config.php
