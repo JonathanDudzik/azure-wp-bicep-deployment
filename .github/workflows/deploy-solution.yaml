@@ -77,7 +77,7 @@ jobs:
     uses: ./.github/workflows/build-service.yaml
     with:
       environment: ${{ needs.environment.outputs.name }}
-      context: ../src
+      context: ./src
       repository: jd
       image: blog
       skipExisting: true
