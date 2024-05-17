@@ -95,7 +95,7 @@ jobs:
         run: |
           az deployment sub create --name ${{ needs.environment.outputs.name }} \
                                    --location ${{ secrets.AZURE_LOCATION }} \
-                                   --template-file ./infra/main.bicep \
+                                   --template-file ./infra/blog.bicep \
                                    --parameters name=${{ needs.environment.outputs.name }} \
                                    --parameters location=${{ secrets.AZURE_LOCATION }} \
                                    --parameters uniqueSuffix=${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
