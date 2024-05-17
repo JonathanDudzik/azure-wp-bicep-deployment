@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      # - 'development'
+      - 'development'
   
   # allow manually triggering the workflow from the GitHub Actions tab
   workflow_dispatch:
@@ -26,19 +26,17 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
       AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
 
-  build:
+  build-jd-blog:
     needs: [environment,validate]
-    name: Build Service
+    name: Build JD Blog
     uses: ./.github/workflows/build-service.yaml
     with:
       environment: ${{ needs.environment.outputs.name }}
-      project: JdPortfolio
       context: ./src
-      repository: jd-portfolio
-      image: jdportfolio:latest
-      skipExisting: false
+      repository: jd
+      image: blog
+      skipExisting: true
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
-      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}  
-
+      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
