@@ -23,23 +23,23 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
       AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
 
-  build-jd-blog:
-    needs: [environment,validate]
-    name: Build JD Blog
-    uses: ./.github/workflows/build-service.yaml
-    with:
-      environment: ${{ needs.environment.outputs.name }}
-      context: ./src
-      repository: jd
-      image: blog
-      skipExisting: true
-    secrets: 
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
-      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
+  # build-jd-blog:
+  #   needs: [environment,validate]
+  #   name: Build JD Blog
+  #   uses: ./.github/workflows/build-service.yaml
+  #   with:
+  #     environment: ${{ needs.environment.outputs.name }}
+  #     context: ./src
+  #     repository: jd
+  #     image: blog
+  #     skipExisting: true
+  #   secrets: 
+  #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  #     AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
+  #     AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
 
   deploy:
-    needs: [environment, build-jd-blog]
+    needs: [environment]
     name: Deploy Bicep 
     runs-on: ubuntu-latest
     environment: 
