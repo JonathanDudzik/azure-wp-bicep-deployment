@@ -39,7 +39,7 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
 
   deploy:
-    needs: [environment, registry, build-jd-blog]
+    needs: [environment, build-jd-blog]
     name: Deploy Bicep 
     runs-on: ubuntu-latest
     environment: 
