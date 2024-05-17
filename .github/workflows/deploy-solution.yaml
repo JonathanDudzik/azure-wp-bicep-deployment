@@ -1,10 +1,10 @@
 # This workflow deploys the full solution including infra
 
 name: Deploy Solution
-on: 
-push:
+on:
+  push:
     branches:
-      - 'main'
+      # - 'main'
       - 'development'
   workflow_dispatch
 jobs:
