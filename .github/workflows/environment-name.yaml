@@ -20,9 +20,9 @@ jobs:
         run: |
           echo "Running on branch ${{ github.ref }}"
           if [ "${{ github.ref }}" = "refs/heads/main" ] || [ "${{ github.ref }}" = "refs/heads/master" ]; then
-            echo "::set-output name=name::Production"
+            echo "::set-output name=name::production"
           elif [ "${{ github.ref }}" = "refs/heads/dev" ] || [ "${{ github.ref }}" = "refs/heads/develop" ]; then
-            echo "::set-output name=name::Development"
+            echo "::set-output name=name::development"
           else
-             echo "::set-output name=name::Development"
+             echo "::set-output name=name::development"
           fi         

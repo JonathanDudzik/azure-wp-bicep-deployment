@@ -71,16 +71,16 @@ jobs:
           RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
           REGISTRY_NAME: acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}
 
-  build-portfolio:
+  build-jd-blog:
     needs: [environment,registry]
-    name: Build JD Portfolio
+    name: Build JD Blog
     uses: ./.github/workflows/build-service.yaml
     with:
       environment: ${{ needs.environment.outputs.name }}
-      project: JdPortfolio
-      context: ./src
-      repository: jd-portfolio
-      image: jd-portfolio
+      project: jd-blog
+      context: ../src
+      repository: jd
+      image: blog
       skipExisting: true
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}

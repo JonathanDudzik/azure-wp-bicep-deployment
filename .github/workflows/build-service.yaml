@@ -4,9 +4,6 @@ on:
       environment:
         required: true
         type: string
-      project:
-        required: true
-        type: string
       repository:
         required: true
         type: string
@@ -50,7 +47,7 @@ jobs:
                        --resource-group $RESOURCE_GROUP \
                        --image ${{ inputs.repository }}/${{ inputs.image }}:latest \
                        --image ${{ inputs.repository }}/${{ inputs.image }}:$(echo ${GITHUB_SHA} | cut -c1-7) \
-                       --file ./src/${{ inputs.project }}/Dockerfile ${{ inputs.context }}
+                       --file ${{ inputs.context }}/Dockerfile 
         env:
           REGISTRY: acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}
           RESOURCE_GROUP: ${{ inputs.environment }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
