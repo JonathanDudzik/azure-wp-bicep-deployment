@@ -1,0 +1,101 @@
+# This workflow deploys the full solution including infra
+
+name: Deploy Solution
+on: workflow_dispatch
+jobs:
+
+  environment:
+    name: Determine Environment Name
+    uses: ./.github/workflows/environment-name.yaml     
+
+  validate:
+    needs: [environment]
+    name: Validate Environment Secrets
+    uses: ./.github/workflows/validate-secrets.yaml
+    with:
+      environment: ${{ needs.environment.outputs.name }}
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
+      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
+      AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
+
+  group:
+    needs: [environment, validate]
+    name: Provision Resource Group 
+    runs-on: ubuntu-latest
+    outputs:
+      name: ${{ steps.resource.outputs.name }}
+    environment: 
+      name: ${{ needs.environment.outputs.name }}
+
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create Group
+        id: resource
+        run: |
+          az group create --name $RESOURCE_GROUP \
+                          --location ${{ secrets.AZURE_LOCATION }} \
+                          --query name
+        env:
+          RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+  
+  registry:
+    needs: [environment, group]
+    name: Provision ACR 
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ needs.environment.outputs.name }}
+
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create Registry
+        id: resource
+        run: |
+          az acr create --resource-group $RESOURCE_GROUP \
+                        --name $REGISTRY_NAME \
+                        --sku Basic \
+                        --admin-enabled true
+        env:
+          RESOURCE_GROUP: ${{ needs.environment.outputs.name }}-${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+          REGISTRY_NAME: acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}
+
+  build-jd-blog:
+    needs: [environment,registry]
+    name: Build JD Blog
+    uses: ./.github/workflows/build-service.yaml
+    with:
+      environment: ${{ needs.environment.outputs.name }}
+      context: ./src
+      repository: jd
+      image: blog
+      skipExisting: true
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
+      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}   
+  
+  # deploy:
+  #   needs: [environment, registry, build-portfolio]
+  #   name: Deploy Bicep 
+  #   runs-on: ubuntu-latest
+  #   environment: 
+  #     name: ${{ needs.environment.outputs.name }}
+    
+  #   steps:
+  #     - uses: actions/checkout@v2   
+  #     - uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
+  #     - name: Deploy
+  #       run: |
+  #         az deployment sub create --name ${{ needs.environment.outputs.name }} \
+  #                                  --location ${{ secrets.AZURE_LOCATION }} \
+  #                                  --template-file ./infra/main.bicep \
+  #                                  --parameters name=${{ needs.environment.outputs.name }} \
+  #                                  --parameters location=${{ secrets.AZURE_LOCATION }} \
+  #                                  --parameters uniqueSuffix=${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}

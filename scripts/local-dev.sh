@@ -1,0 +1,1 @@
+docker run --name my-wp-container -p 80:80 --env DB_HOST=database_host --env DB_USER=database_user --env DB_PASSWORD=database_password --env DB_NAME=database_name my_wp_image
