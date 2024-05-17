@@ -79,23 +79,24 @@ jobs:
       AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}   
   
-  # deploy:
-  #   needs: [environment, registry, build-portfolio]
-  #   name: Deploy Bicep 
-  #   runs-on: ubuntu-latest
-  #   environment: 
-  #     name: ${{ needs.environment.outputs.name }}
+  deploy:
+    needs: [environment, registry, build-portfolio]
+    name: Deploy Bicep 
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ needs.environment.outputs.name }}
     
-  #   steps:
-  #     - uses: actions/checkout@v2   
-  #     - uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.AZURE_CREDENTIALS }}
-  #     - name: Deploy
-  #       run: |
-  #         az deployment sub create --name ${{ needs.environment.outputs.name }} \
-  #                                  --location ${{ secrets.AZURE_LOCATION }} \
-  #                                  --template-file ./infra/main.bicep \
-  #                                  --parameters name=${{ needs.environment.outputs.name }} \
-  #                                  --parameters location=${{ secrets.AZURE_LOCATION }} \
-  #                                  --parameters uniqueSuffix=${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+    steps:
+      - uses: actions/checkout@v2   
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy
+        run: |
+          az deployment sub create --name ${{ needs.environment.outputs.name }} \
+                                   --location ${{ secrets.AZURE_LOCATION }} \
+                                   --template-file ./infra/main.bicep \
+                                   --parameters name=${{ needs.environment.outputs.name }} \
+                                   --parameters location=${{ secrets.AZURE_LOCATION }} \
+                                   --parameters uniqueSuffix=${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+                                   --parameters registryName=acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}

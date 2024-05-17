@@ -120,7 +120,7 @@ module registryModule 'modules/acr.bicep' = {
   }
 }
 
-module portolioModule 'modules/containerApps/portfolio.bicep' = {
+module portolioModule 'modules/containerApps/blog.bicep' = {
   name: '${deployment().name}--order-service'
   scope: resourceGroup
   dependsOn: [
