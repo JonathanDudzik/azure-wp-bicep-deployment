@@ -14,7 +14,7 @@ param uniqueSuffix string = ''
 @secure()
 param registryName string = ''
 
-param containerAppsEnvName = 'cae-${uniqueSuffix}'
+param containerAppsEnvName string = 'cae-${uniqueSuffix}'
 param resourceTags object = {
   environment: name
   owner: 'Jonathan Dudzik'
