@@ -5,9 +5,6 @@ on:
     branches:
       - 'main'
       - 'development'
-  
-  # allow manually triggering the workflow from the GitHub Actions tab
-  workflow_dispatch:
 
 jobs:
   environment:
@@ -26,17 +23,39 @@ jobs:
       AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
       AZURE_LOCATION: ${{ secrets.AZURE_LOCATION }}
 
-  build-jd-blog:
-    needs: [environment,validate]
-    name: Build JD Blog
-    uses: ./.github/workflows/build-service.yaml
-    with:
-      environment: ${{ needs.environment.outputs.name }}
-      context: ./src
-      repository: jd
-      image: blog
-      skipExisting: true
-    secrets: 
-      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-      AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
-      AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
+  # build-jd-blog:
+  #   needs: [environment,validate]
+  #   name: Build JD Blog
+  #   uses: ./.github/workflows/build-service.yaml
+  #   with:
+  #     environment: ${{ needs.environment.outputs.name }}
+  #     context: ./src
+  #     repository: jd
+  #     image: blog
+  #     skipExisting: true
+  #   secrets: 
+  #     AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  #     AZURE_SUFFIX: ${{ secrets.AZURE_SUFFIX }}
+  #     AZURE_UNIQUE_CODE: ${{ secrets.AZURE_UNIQUE_CODE }}
+
+  deploy:
+    needs: [environment]
+    name: Deploy Bicep 
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ needs.environment.outputs.name }}
+    
+    steps:
+      - uses: actions/checkout@v2   
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Deploy
+        run: |
+          az deployment sub create --name ${{ needs.environment.outputs.name }} \
+                                   --location ${{ secrets.AZURE_LOCATION }} \
+                                   --template-file ./infra/blog.bicep \
+                                   --parameters name=${{ needs.environment.outputs.name }} \
+                                   --parameters location=${{ secrets.AZURE_LOCATION }} \
+                                   --parameters uniqueSuffix=${{ secrets.AZURE_SUFFIX }}-${{ secrets.AZURE_UNIQUE_CODE }}
+                                   --parameters registryName=acr${{ secrets.AZURE_SUFFIX }}${{ secrets.AZURE_UNIQUE_CODE }}

@@ -1,10 +1,5 @@
 param containerAppsEnvName string
 param location string
-param sqlServerName string
-param sqlDatabaseName string
-param sqlAdminLogin string
-@secure()
-param sqlAdminLoginPassword string
 param registryName string
 
 resource cappsEnv 'Microsoft.App/managedEnvironments@2022-01-01-preview' existing = {
@@ -43,16 +38,6 @@ resource bootstrapper 'Microsoft.App/containerApps@2022-03-01' = {
         appId: 'bootstrapper'
         appProtocol: 'http'
       }
-      secrets: [
-        {
-          name: 'reddog-sql'
-          value: 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Initial Catalog=${sqlDatabaseName};Persist Security Info=False;User ID=${sqlAdminLogin};Password=${sqlAdminLoginPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
-        }
-        {
-          name: 'registry'
-          value: registry.listCredentials().passwords[0].value
-        }
-      ]
       registries: [
         {
           server: registry.properties.loginServer
